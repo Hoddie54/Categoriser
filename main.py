@@ -5,7 +5,7 @@ from tkinter import messagebox
 import os
 from PIL import Image, ImageTk
 
-categories = ('maths1','maths 2','nth term','hah ironic')
+categories = ('maths','english','shape','hah ironic')
 difficulty = ("Easy","Medium","Hard")
 
 class App:
@@ -39,7 +39,7 @@ class App:
         self.cursor.execute('SELECT * FROM sqlite_master')
         #print(self.cursor.fetchall()[0])
         try:
-            self.cursor.execute('CREATE TABLE questions(ID int NOT NULL, Category varchar(255),Difficulty varchar(255), Width int, Height int, Answer varchar(255),Location varchar(255), PRIMARY KEY (ID))')
+            self.cursor.execute('CREATE TABLE questions(ID int NOT NULL, Category varchar(255),Difficulty varchar(255), OutOf int, Width int, Height int, Answer varchar(255),Location varchar(255), PRIMARY KEY (ID))')
         except:
             print('Questions table found')
         self.db.commit()
@@ -51,16 +51,20 @@ class App:
         L1 = Label(frame, text="Category")
         L2 = Label(frame, text="Difficulty")
         L3 = Label(frame, text="Answer")
+        L4 = Label(frame, text="Out Of")
 
         #Creates drop-down boxes and entry box for answer
         self.O1var = StringVar(frame)
         self.O2var = StringVar(frame)
         self.Ansvar = StringVar(frame)
+        self.OutOfVar = StringVar(frame)
         self.O1var.set(categories[0])
         self.O2var.set(difficulty[0])
+        self.OutOfVar.set(1)
         O1 = OptionMenu(frame,self.O1var, *categories) #I don't know why a pointer is used here, but it works
         O2 = OptionMenu(frame,self.O2var, *difficulty)
         Ans = Entry(frame, textvariable=self.Ansvar)
+        OutOf = Entry(frame, textvariable=self.OutOfVar)
 
         #Creates Buttons for going forward, going back and saving
         B1 = Button(frame, text="Previous Page", command=self.previousPage)
@@ -74,9 +78,11 @@ class App:
         O1.grid(row=0,column=2)
         O2.grid(row=1,column=2)
         Ans.grid(row=2,column=2)
-        B1.grid(row=3,column=1)
-        B2.grid(row=3,column=2)
-        B3.grid(row=3,column=3)
+        L4.grid(row=3,column=1)
+        OutOf.grid(row=3,column=2)
+        B1.grid(row=4,column=1)
+        B2.grid(row=4,column=2)
+        B3.grid(row=4,column=3)
 
     def previousPage(self):
         if(self.currentPage != 0):
@@ -119,8 +125,8 @@ class App:
                 #print(self.cursor.fetchall())
                 id = self.cursor.fetchall()[0][0] + 1
                 #print(id)
-                self.cursor.execute('INSERT INTO questions (ID, Category, Difficulty, Width, Height, Answer, Location) VALUES (?,?,?,?,?,?,?)',
-                                    (str(id), self.O1var.get(), self.O2var.get(), image.size[0], image.size[1],
+                self.cursor.execute('INSERT INTO questions (ID, Category, Difficulty, OutOf, Width, Height, Answer, Location) VALUES (?,?,?,?,?,?,?,?)',
+                                    (str(id), self.O1var.get(), self.O2var.get(), self.OutOfVar.get() ,image.size[0], image.size[1],
                                      self.Ansvar.get(),"./questions/QID" + str(id) + ".jpg"))
                 image.save("./questions/QID" + str(id) + ".jpg")
                 self.db.commit()
