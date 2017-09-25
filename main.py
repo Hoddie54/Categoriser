@@ -135,7 +135,7 @@ class App:
         self.cursor.execute('SELECT * FROM sqlite_master')
         #print(self.cursor.fetchall()[0])
         try:
-            self.cursor.execute('CREATE TABLE questions(ID int NOT NULL, Category varchar(255),Difficulty varchar(255), OutOf int, Width int, Height int, Answer varchar(255),Location varchar(255), PRIMARY KEY (ID))')
+            self.cursor.execute('CREATE TABLE questions(ID int NOT NULL, Category varchar(255),Difficulty int, OutOf int, Width int, Height int, Answer varchar(255),Location varchar(255), PRIMARY KEY (ID))')
         except:
             print('Questions table found')
         self.db.commit()
@@ -222,7 +222,7 @@ class App:
                 id = self.cursor.fetchall()[0][0] + 1
                 #print(id)
                 self.cursor.execute('INSERT INTO questions (ID, Category, Difficulty, OutOf, Width, Height, Answer, Location) VALUES (?,?,?,?,?,?,?,?)',
-                                    (str(id), self.O1var.get(), self.O2var.get(), self.OutOfVar.get() ,image.size[0], image.size[1],
+                                    (str(id), self.O1var.get(), int(self.O2var.get()), self.OutOfVar.get() ,image.size[0], image.size[1],
                                      self.Ansvar.get(),"./questions/QID" + str(id) + ".jpg"))
                 image.save("./questions/QID" + str(id) + ".jpg")
                 self.db.commit()
